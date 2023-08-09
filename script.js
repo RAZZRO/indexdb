@@ -14,6 +14,7 @@ window.onload = () => {
         console.log("Dataase opend Successfuly");
 
         db = request.result;
+        console.log(db);
 
 
     }
@@ -21,22 +22,65 @@ window.onload = () => {
     request.onupgradeneeded = (e) => {
 
         let db = e.target.result;
+        console.log(db);
 
-        let ObjectStore = db.createObjectStore("contacts", {
+
+        let objectStore = db.createObjectStore("contacts", {
             keyPath: 'id',
             autoIncrement: true
         });
 
 
-        ObjectStore.createIndex('firstname', 'firstname', {
+        objectStore.createIndex('firstname', 'firstname', {
             unique: false
         });
-        ObjectStore.createIndex('lastname' ,'lastname',{
+        objectStore.createIndex('lastname', 'lastname', {
             unique: false
         });
 
         console.log("Database setup Successfuly");
 
     }
+
+    
+
 }
+
+const addData = (e) => {
+
+    e.preventDefault();
+
+    let newItem = {
+        firstname: firstnameInput,
+        lastname: lastnameInput
+    }
+
+    // let transaction = db.transaction(['contacts'],'readwrite').objectStore('contacts');
+    // console.log(transaction +"trrr");
+    // let transaction = db.transaction(['contacts'], 'readwrite').objectStore('contacts');
+    // console.log(transaction);
+    // let transaction = db.transaction(['contacts'],'readwrite').objectStore('contacts').add(newItem);
+    // console.log(transaction);
+
+    let transaction = db.transaction(['contacts'], 'readwrite').objectStore('contacts').add(newItem);
+
+
+    transaction.onsuccess = () => {
+        firstnameInput.value = "";
+        lastnameInput.value = "";
+    }
+
+
+    transaction.oncomplete = () => {
+        console.log("transaction completed on Database");
+    }
+
+
+    transaction.onerror = () => {
+        console.log("Error transaction on Database");
+    }
+
+
+}
+form.addEventListener('submit',addData);
 
